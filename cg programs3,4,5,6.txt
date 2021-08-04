@@ -1,0 +1,252 @@
+3.rectangle
+#include<GL/glut.h>
+void display()
+{
+glClear(GL_COLOR_BUFFER_BIT);
+glColor3f(1.0,0.0,0.0);
+glBegin(GL_POLYGON);
+glVertex2f(-0.5,-0.5);
+glVertex2f(-0.5,0.5);
+glVertex2f(0.5,0.5);
+glVertex2f(0.5,-0.5);
+glEnd();
+glColor3f(0.0,0.0,1.0);
+glBegin(GL_POLYGON);
+glVertex2f(-0.25,-0.25);
+glVertex2f(-0.25,0.25);
+glVertex2f(0.25,0.25);
+glVertex2f(0.25,-0.25);
+glEnd();
+glFlush();
+}
+void init()
+{
+glClearColor(0.0,0.0,0.0,0.0);
+glMatrixMode(GL_PROJECTION);
+glLoadIdentity();
+glOrtho(-1.0,1.0,-1.0,1.0,-1.0,1.0);
+}
+int main(int argc,char **argv)
+{
+glutInit(&argc,argv);
+glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
+glutInitWindowPosition(0,0);
+glutInitWindowSize(800,500);
+glutCreateWindow("Rectangle");
+init();
+glutDisplayFunc(display);
+glutMainLoop();
+}
+
+4.rotation
+#include<GL/glut.h>
+GLfloat vertices[][3]={{-1.0,-1.0,-1.0},{1.0,-1.0,-1.0},{1.0,1.0,-1.0},{-1.0,1.0,-1.0},{-1.0,-1.0,1.0},{1.0,-1.0,1.0},{1.0,1.0,1.0},{-1.0,1.0,1.0}};
+GLfloat colors[][3]={{1.0,1.0,1.0},{1.0,0.0,0.0},{1.0,0.0,0.0},{0.0,1.0,0.0},{1.0,0.0,1.0},{0.0,0.0,1.0},{1.0,0.0,1.0},{0.0,1.0,1.0}};
+void polygon(int a,int b,int c,int d)
+{
+   glBegin(GL_POLYGON);
+   glColor3fv(colors[a]);
+   glVertex3fv(vertices[a]);
+   glColor3fv(colors[b]);
+   glVertex3fv(vertices[b]);
+   glColor3fv(colors[c]);
+   glVertex3fv(vertices[c]);
+   glColor3fv(colors[d]);
+   glVertex3fv(vertices[d]);
+   glEnd();
+}
+void colorcube(void)
+{
+   polygon(0,3,2,1);
+   polygon(2,3,7,6);
+   polygon(0,4,7,3);
+   polygon(1,2,6,5);
+   polygon(4,5,6,7);
+   polygon(0,1,5,4);
+}
+static GLfloat theta[]={0.0,0.0,0.0};
+static GLint axis=2;
+void display(void)
+{
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
+    glRotatef(theta[0],1.0,0.0,0.0);
+    glRotatef(theta[1],0.0,1.0,0.0);
+    glRotatef(theta[2],0.0,0.0,1.0);
+    colorcube();
+    glFlush();
+    glutSwapBuffers();
+}
+void spincube()
+{
+    theta[axis]+=10.0;
+    if(theta[axis]>360.0)
+    theta[axis]-=360.0;
+    glutPostRedisplay();
+}
+void mouse(int btn,int state,int x,int y)
+{
+   if(btn==GLUT_LEFT_BUTTON && state==GLUT_DOWN)
+      axis=0;
+   if(btn==GLUT_MIDDLE_BUTTON && state==GLUT_DOWN)
+      axis=1;
+   if(btn==GLUT_RIGHT_BUTTON && state==GLUT_DOWN)
+      axis=2;
+}
+void myInit()
+{
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(-2.0,2.0,-2.0,2.0,-10.0,10.0);
+    glMatrixMode(GL_MODELVIEW);
+}
+int main(int argc,char **argv)
+{
+    glutInit(&argc,argv);
+    glutInitDisplayMode(GLUT_DEPTH | GLUT_RGB | GLUT_DOUBLE);
+    glutInitWindowSize(500,500);
+    glutCreateWindow("rotating a color cube");
+    myInit();
+    glutDisplayFunc(display);
+    glutIdleFunc(spincube);
+    glutMouseFunc(mouse);
+    glEnable(GL_DEPTH_TEST);
+    glutMainLoop();
+}
+
+6.house
+#include<GL/glut.h>
+using namespace std;
+void house()
+{
+   glColor3f(0.0,0.0,0.0);
+   glBegin(GL_POLYGON);
+   glVertex2f(25,10);
+   glVertex2f(35,10);
+   glVertex2f(35,20);
+   glVertex2f(25,20);
+   glEnd();
+   glColor3f(0.0,1.0,0.0);
+   glBegin(GL_POLYGON);
+   glVertex2f(10,10);
+   glVertex2f(50,10);
+   glVertex2f(50,50);
+   glVertex2f(10,50);
+   glEnd();
+   glColor3f(0.0,0.0,0.0);
+   glBegin(GL_POLYGON);
+   glVertex2f(10,50);
+   glVertex2f(50,50);
+   glVertex2f(30,70);
+   glEnd();
+}
+void display(void)
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    house();
+    glFlush();
+    glutSwapBuffers();
+}
+void mouse(int btn,int state,int x,int y)
+{
+    if(btn==GLUT_LEFT_BUTTON && state==GLUT_DOWN)
+    {
+        glutDisplayFunc(display);
+        glTranslatef(35,35,0);
+        glRotatef(-45,0.0,0.0,1.0);
+        glTranslatef(-35,-35,0);
+        glutPostRedisplay();
+    }
+}
+void myinit()
+{
+    glClearColor(1.0,1.0,1.0,1.0);
+    gluOrtho2D(-100,100,-100,100);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+int main(int argc,char **argv)
+{
+    glutInit(&argc,argv);
+    glutInitDisplayMode(GLUT_DEPTH | GLUT_RGB | GLUT_DOUBLE);
+    glutInitWindowSize(500,500);
+    glutCreateWindow("House");
+    myinit();
+    glutMouseFunc(mouse);
+    glutDisplayFunc(display);
+    glEnable(GL_DEPTH_TEST);
+    glutMainLoop();
+}
+
+5.circle
+#include<GL/glut.h>
+#include<math.h>
+#include<stdio.h>
+using namespace std;
+void draw_pixel(GLint cx,GLint cy)
+{
+   glColor3f(1.0,1.0,1.0);
+   glBegin(GL_POINTS);
+   glVertex2i(cx,cy);
+   glEnd();
+}
+void plotpixels(GLint h,GLint k,GLint x,GLint y)
+{
+   draw_pixel(x+h,y+k);
+   draw_pixel(-x+h,y+k);
+   draw_pixel(x+h,-y+k);
+   draw_pixel(-x+h,-y+k);
+   draw_pixel(y+h,x+k);
+   draw_pixel(y+h,-x+k);
+   draw_pixel(-y+h,x+k);
+   draw_pixel(-y+h,-x+k);
+}
+void circle_draw(GLint h,GLint k,GLint r)
+{
+   GLint d=1-r,x=0,y=r;
+   while(y>x)
+   {
+     plotpixels(h,k,x,y);
+     if(d<0)
+        d+=2*x+3;
+     else
+     {
+        d+=2*(x-y)+5;
+        y--;
+     }
+      x++;
+    }
+   plotpixels(h,k,x,y);
+}
+void Init()
+{
+  glClearColor(0.0,0.0,0.0,0.0);
+  gluOrtho2D(0.0,400.0,0.0,300.0);
+}
+void display()
+{
+   GLint xc=100,yc=150,r=50;
+   GLint x1c=200,y1c=200;
+   GLint x2c=300,y2c=150;
+   GLint x3c=200,y3c=100;
+   GLint x4c=200,y4c=150;
+   glClear(GL_COLOR_BUFFER_BIT);
+   glColor3f(0.0,0.0,1.0);
+   glPointSize(2.0);
+   circle_draw(xc,yc,r);
+   circle_draw(x1c,y1c,r);
+   circle_draw(x2c,y2c,r);
+   circle_draw(x3c,y3c,r);
+   circle_draw(x4c,y4c,r);
+   glFlush();
+}
+int main(int argc,char **argv)
+{
+   glutInit(&argc,argv);
+   glutInitDisplayMode(GLUT_SINGLE |GLUT_RGB);
+   glutInitWindowPosition(50,50);
+   glutInitWindowSize(400,300);
+   glutCreateWindow("Circle creation");
+   Init();
+   glutDisplayFunc(display);
+   glutMainLoop();
+}
