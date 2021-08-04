@@ -1,0 +1,57 @@
+#include <GL/glut.h>
+#include <math.h>
+void display(void)
+{
+typedef GLfloat point3[3];
+point3 vertices[4] = {{25.0,25.0,25.0},{25.0, 75.0, 25.0},{75.0,25, 25},{75,75,75}};
+int i,j, k;
+point3 p = {35, 35, 35};
+glClear (GL_COLOR_BUFFER_BIT);
+/* Compute and display 1000 new points */
+for(k = 0; k <= 10000;k++)
+{
+j = rand()%4; /* pick vertex at random */
+/* Compute halfway point between vertex and p */
+p[0] = (p[0] + vertices[j][0])/2.0;
+p[1] = (p[1] + vertices[j][1])/2.0;
+p[2] = (p[2] + vertices[j][2])/2.0;
+/* plot the point */
+glBegin(GL_POINTS);
+glColor3f(p[0]/100,p[1]/100,p[2]/100);
+glVertex3fv(p);
+glEnd();
+}
+/* don't wait!
+* start processing buffered OpenGL routines
+*/
+glFlush ();
+}
+void init (void)
+{
+/* select clearing color */
+glClearColor (0.0, 0.0, 1.0, 0.0);
+/* initialize viewing values */
+glMatrixMode(GL_PROJECTION);
+glLoadIdentity();
+glOrtho(0.0, 100.0, 0.0, 100.0, -100.0, 100.0);
+glMatrixMode(GL_MODELVIEW);
+}
+/*
+* Declare initial window size, position, and display mode
+* (single buffer and RGBA). Open window with "Sierpinski Gasket"
+* in its title bar. Call initialization routines.
+* Register callback function to display graphics.
+* Enter main loop and process events.
+*/
+int main(int argc, char** argv)
+{
+glutInit(&argc, argv);
+glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
+glutInitWindowSize (600, 600);
+glutInitWindowPosition (100, 100);
+glutCreateWindow ("3D Gasket");
+init ();
+glutDisplayFunc(display);
+glutMainLoop();
+return 0; /* ANSI C requires main to return int. */
+}
